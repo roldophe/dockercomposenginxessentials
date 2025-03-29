@@ -1,0 +1,55 @@
+services:
+  first-nginx:
+    extends:
+      file: base/common-service.yaml
+      service: nginx-service
+    container_name: first-nginx-container
+    # ports:
+    #   - "9999:80"
+    volumes:
+      - ./nginx/html/index1.html:/usr/share/nginx/html/index.html
+    networks:
+      nginx-network:
+        ipv4_address: 192.168.0.10
+
+  second-nginx:
+    extends:
+      file: base/common-service.yaml
+      service: nginx-service
+    container_name: second-nginx-container
+    # ports:
+    #   - "7777:80"
+    volumes:
+      - ./nginx/html/index2.html:/usr/share/nginx/html/index.html
+    networks:
+      - nginx-network
+
+  third-nginx:
+    extends:
+      file: base/common-service.yaml
+      service: nginx-service
+    container_name: third-nginx-container
+    # ports:
+    #   - "8888:80"
+    volumes:
+      - ./nginx/html/index3.html:/usr/share/nginx/html/index.html
+    networks:
+      - nginx-network
+  loadbalancer:
+    extends:
+      file: base/common-service.yaml
+      service: nginx-service
+    container_name: nginx-load-balancer
+    ports:
+      - "8888:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - nginx-network
+networks:
+  nginx-network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+          gateway: 192.168.0.1

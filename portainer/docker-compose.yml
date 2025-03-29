@@ -1,0 +1,25 @@
+services:
+  portainer:
+    image: portainer/portainer-ce
+    container_name: 'portainer'
+    privileged: true
+    volumes:
+      - ./data/portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - scoobydoo
+
+  watchtower:
+    image: containrrr/watchtower
+    container_name: 'watchtower'
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --schedule "0 0 4 * * *" --debug
+    networks:
+      - scoobydoo
+
+networks:
+  scoobydoo:
+    driver: bridge
